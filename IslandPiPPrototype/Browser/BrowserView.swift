@@ -1,116 +1,83 @@
 import SwiftUI
 import WebKit
-
-// MARK: - WKWebView UIKit wrapper
+import UIKit
 
 struct BrowserWebView: UIViewRepresentable {
-    @EnvironmentObject private var browserState: BrowserState
+    @EnvironmentObject private var state: BrowserState
 
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator { Coordinator(state: state) }
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
-        config.mediaTypesRequiringUserActionForPlayback = [.all]
+        let web = WKWebView(frame: .zero, configuration: config)
+        web.allowsBackForwardNavigationGestures = true
+        web.navigationDelegate = context.coordinator
+        web.scrollView.keyboardDismissMode = .interactive
+        web.scrollView.contentInsetAdjustmentBehavior = .automatic
+        web.isOpaque = false
+        web.backgroundColor = .systemBackground
+        context.coordinator.web = web
 
-        let webView = WKWebView(frame: .zero, configuration: config)
-        webView.allowsBackForwardNavigationGestures = true
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.backgroundColor = .clear
+        NotificationCenter.default.addObserver(forName: .browserNavigate, object: nil, queue: .main) { [weak web] note in
+            if let url = note.object as? URL { web?.load(URLRequest(url: url)) }
+        }
+        NotificationCenter.default.addObserver(forName: .browserReload, object: nil, queue: .main) { [weak web] _ in web?.reload() }
+        NotificationCenter.default.addObserver(forName: .browserBack, object: nil, queue: .main) { [weak web] _ in web?.goBack() }
+        NotificationCenter.default.addObserver(forName: .browserForward, object: nil, queue: .main) { [weak web] _ in web?.goForward() }
 
-        // Set user agent to something sensible so mobile sites work
-        webView.customUserAgent = nil // use default WebKit UA
+        if let initialURL = state.url {
+            web.load(URLRequest(url: initialURL))
+        }
 
-        context.coordinator.webView = webView
-        context.coordinator.browserState = browserState
-        browserState.webView = webView
-
-        // Observe properties
-        context.coordinator.observe(webView)
-
-        return webView
+        return web
     }
 
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        context.coordinator.browserState = browserState
-    }
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 
-    // MARK: - Coordinator
     final class Coordinator: NSObject, WKNavigationDelegate {
-        weak var webView: WKWebView?
-        weak var browserState: BrowserState?
+        weak var web: WKWebView?
+        let state: BrowserState
+        private var observation: NSKeyValueObservation?
 
-        private var titleObserver: NSKeyValueObservation?
-        private var urlObserver: NSKeyValueObservation?
-        private var canGoBackObserver: NSKeyValueObservation?
-        private var canGoForwardObserver: NSKeyValueObservation?
-        private var loadingObserver: NSKeyValueObservation?
-        private var progressObserver: NSKeyValueObservation?
+        init(state: BrowserState) {
+            self.state = state
+            super.init()
+        }
 
-        func observe(_ webView: WKWebView) {
-            webView.navigationDelegate = self
-
-            titleObserver = webView.observe(\.title, options: [.new]) { [weak self] wv, _ in
-                Task { @MainActor in self?.browserState?.pageTitle = wv.title ?? "" }
-            }
-            urlObserver = webView.observe(\.url, options: [.new]) { [weak self] wv, _ in
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            state.isLoading = true
+            state.errorMessage = nil
+            observation = webView.observe(\.estimatedProgress, options: [.new]) { [weak self] web, _ in
                 Task { @MainActor in
-                    self?.browserState?.currentURL = wv.url
-                    if let url = wv.url, url.absoluteString != "about:blank" {
-                        self?.browserState?.urlString = url.absoluteString
-                    }
+                    self?.state.progress = web.estimatedProgress
                 }
             }
-            canGoBackObserver = webView.observe(\.canGoBack, options: [.new]) { [weak self] wv, _ in
-                Task { @MainActor in self?.browserState?.canGoBack = wv.canGoBack }
-            }
-            canGoForwardObserver = webView.observe(\.canGoForward, options: [.new]) { [weak self] wv, _ in
-                Task { @MainActor in self?.browserState?.canGoForward = wv.canGoForward }
-            }
-            loadingObserver = webView.observe(\.isLoading, options: [.new]) { [weak self] wv, _ in
-                Task { @MainActor in self?.browserState?.isLoading = wv.isLoading }
-            }
-            progressObserver = webView.observe(\.estimatedProgress, options: [.new]) { [weak self] wv, _ in
-                Task { @MainActor in self?.browserState?.loadingProgress = wv.estimatedProgress }
-            }
         }
 
-        // MARK: WKNavigationDelegate
-        nonisolated func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            Task { @MainActor in browserState?.errorMessage = nil }
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            state.isLoading = false
+            state.url = webView.url
+            state.addressText = webView.url?.absoluteString ?? ""
+            state.title = webView.title ?? ""
+            state.canGoBack = webView.canGoBack
+            state.canGoForward = webView.canGoForward
+            observation?.invalidate()
+            observation = nil
         }
 
-        nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            Task { @MainActor in
-                browserState?.isLoading = false
-                browserState?.showingHome = false
-            }
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            state.isLoading = false
+            if (error as NSError).code != NSURLErrorCancelled { state.errorMessage = error.localizedDescription }
+            observation?.invalidate()
+            observation = nil
         }
 
-        nonisolated func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-            Task { @MainActor in
-                let nsError = error as NSError
-                // Don't show error for user-cancelled navigations
-                if nsError.code == NSURLErrorCancelled { return }
-                browserState?.errorMessage = error.localizedDescription
-                browserState?.isLoading = false
-            }
-        }
-
-        nonisolated func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            Task { @MainActor in
-                let nsError = error as NSError
-                if nsError.code == NSURLErrorCancelled { return }
-                browserState?.errorMessage = error.localizedDescription
-                browserState?.isLoading = false
-            }
-        }
-
-        nonisolated func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-            // Allow all standard navigations
-            return .allow
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            state.isLoading = false
+            if (error as NSError).code != NSURLErrorCancelled { state.errorMessage = error.localizedDescription }
+            observation?.invalidate()
+            observation = nil
         }
     }
 }

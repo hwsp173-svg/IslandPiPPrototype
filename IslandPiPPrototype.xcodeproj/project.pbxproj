@@ -1,88 +1,46 @@
 // !$*UTF8*$!
 {
- archiveVersion = 1;
- classes = {};
- objectVersion = 56;
- objects = {
-/* Begin PBXBuildFile section */
-  A001 /* IslandBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001; };
-  A002 /* IslandContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B002; };
-  A003 /* IslandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003; };
-  A004 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004; };
-  A005 /* DynamicIslandOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B005; };
-  A006 /* IslandSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B006; };
-  A007 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007; };
-  A008 /* BrowserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008; };
-  A009 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B009; };
-  A010 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B010; };
-  A011 /* BrowserHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B014; };
-  A012 /* BrowserToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B015; };
-/* End PBXBuildFile section */
-/* Begin PBXContainerItemProxy section */
-  E001 = {isa = PBXContainerItemProxy; containerPortal = F001; proxyType = 1; remoteGlobalIDString = C001; remoteInfo = IslandPiPPrototype; };
-/* End PBXContainerItemProxy section */
-/* Begin PBXFileReference section */
-  B001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandBrowserApp.swift; sourceTree = "<group>"; };
-  B002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandContent.swift; sourceTree = "<group>"; };
-  B003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandState.swift; sourceTree = "<group>"; };
-  B004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
-  B005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicIslandOverlay.swift; sourceTree = "<group>"; };
-  B006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandSettingsView.swift; sourceTree = "<group>"; };
-  B007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-  B008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserState.swift; sourceTree = "<group>"; };
-  B009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
-  B010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandPiPPrototypeTests.swift; sourceTree = "<group>"; };
-  B011 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-  B012 = {isa = PBXFileReference; explicitFileType = wrapper.application; path = IslandPiPPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
-  B013 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = IslandPiPPrototypeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-  B014 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHomeView.swift; sourceTree = "<group>"; };
-  B015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserToolbar.swift; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-/* Begin PBXFrameworksBuildPhase section */
-  D001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-  D002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-/* End PBXFrameworksBuildPhase section */
-/* Begin PBXGroup section */
-  G001 = {isa = PBXGroup; children = (G002, G010, G011,); sourceTree = "<group>"; };
-  G002 = {isa = PBXGroup; children = (G003, G004, G005, G006, G007, B011,); path = IslandPiPPrototype; sourceTree = "<group>"; };
-  G003 = {isa = PBXGroup; children = (B001,); path = App; sourceTree = "<group>"; };
-  G004 = {isa = PBXGroup; children = (B008, B009, B014, B015,); path = Browser; sourceTree = "<group>"; };
-  G005 = {isa = PBXGroup; children = (B002, B003, B005, B006,); path = Island; sourceTree = "<group>"; };
-  G006 = {isa = PBXGroup; children = (B004,); path = Services; sourceTree = "<group>"; };
-  G007 = {isa = PBXGroup; children = (B007,); path = UI; sourceTree = "<group>"; };
-  G010 = {isa = PBXGroup; children = (B010,); path = IslandPiPPrototypeTests; sourceTree = "<group>"; };
-  G011 = {isa = PBXGroup; children = (B012, B013,); name = Products; sourceTree = "<group>"; };
-/* End PBXGroup section */
-/* Begin PBXNativeTarget section */
-  C001 = {isa = PBXNativeTarget; buildConfigurationList = H001; buildPhases = (D001, I001, J001,); buildRules = (); dependencies = (); name = IslandPiPPrototype; productName = IslandPiPPrototype; productReference = B012; productType = "com.apple.product-type.application"; };
-  C002 = {isa = PBXNativeTarget; buildConfigurationList = H002; buildPhases = (D002, I002,); buildRules = (); dependencies = (K001,); name = IslandPiPPrototypeTests; productName = IslandPiPPrototypeTests; productReference = B013; productType = "com.apple.product-type.bundle.unit-test"; };
-/* End PBXNativeTarget section */
-/* Begin PBXProject section */
-  F001 = {isa = PBXProject; attributes = { LastUpgradeCheck = 1540; TargetAttributes = { C001 = { CreatedOnToolsVersion = 15.4; }; }; }; buildConfigurationList = H000; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = G001; productRefGroup = G011; projectDirPath = ""; projectRoot = ""; targets = (C001, C002,); };
-/* End PBXProject section */
-/* Begin PBXResourcesBuildPhase section */
-  J001 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-/* End PBXResourcesBuildPhase section */
-/* Begin PBXSourcesBuildPhase section */
-  I001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A001,A002,A003,A004,A005,A006,A007,A008,A009,A011,A012,); runOnlyForDeploymentPostprocessing = 0; };
-  I002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A010,); runOnlyForDeploymentPostprocessing = 0; };
-/* End PBXSourcesBuildPhase section */
-/* Begin PBXTargetDependency section */
-  K001 = {isa = PBXTargetDependency; target = C001; targetProxy = E001; };
-/* End PBXTargetDependency section */
-/* Begin XCBuildConfiguration section */
-  L000 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Debug; };
-  L001 = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Release; };
-  L010 = {isa = XCBuildConfiguration; buildSettings = { ARCHS = arm64; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = IslandPiPPrototype/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-  L011 = {isa = XCBuildConfiguration; buildSettings = { ARCHS = arm64; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = IslandPiPPrototype/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
-  L020 = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowserTests; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IslandPiPPrototype.app/IslandPiPPrototype"; }; name = Debug; };
-  L021 = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowserTests; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IslandPiPPrototype.app/IslandPiPPrototype"; }; name = Release; };
-/* End XCBuildConfiguration section */
-/* Begin XCConfigurationList section */
-  H000 = {isa = XCConfigurationList; buildConfigurations = (L000,L001,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-  H001 = {isa = XCConfigurationList; buildConfigurations = (L010,L011,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-  H002 = {isa = XCConfigurationList; buildConfigurations = (L020,L021,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-/* End XCConfigurationList section */
- };
- rootObject = F001;
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+		000000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = IslandPiPPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000002 = {isa = PBXGroup; children = (000000000000000000000003,000000000000000000000004,000000000000000000000005,000000000000000000000006,000000000000000000000007,000000000000000000000012); path = IslandPiPPrototype; sourceTree = "<group>"; };
+		000000000000000000000003 = {isa = PBXGroup; children = (000000000000000000000013); path = App; sourceTree = "<group>"; };
+		000000000000000000000004 = {isa = PBXGroup; children = (000000000000000000000014,000000000000000000000015,000000000000000000000016); path = Browser; sourceTree = "<group>"; };
+		000000000000000000000005 = {isa = PBXGroup; children = (000000000000000000000017,000000000000000000000018,000000000000000000000019); path = Island; sourceTree = "<group>"; };
+		000000000000000000000006 = {isa = PBXGroup; children = (000000000000000000000020); path = Services; sourceTree = "<group>"; };
+		000000000000000000000007 = {isa = PBXGroup; children = (000000000000000000000021); path = UI; sourceTree = "<group>"; };
+		000000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		000000000000000000000013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandBrowserApp.swift; sourceTree = "<group>"; };
+		000000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserState.swift; sourceTree = "<group>"; };
+		000000000000000000000015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
+		000000000000000000000016 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserToolbar.swift; sourceTree = "<group>"; };
+		000000000000000000000017 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandState.swift; sourceTree = "<group>"; };
+		000000000000000000000018 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicIslandOverlay.swift; sourceTree = "<group>"; };
+		000000000000000000000019 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandSettingsView.swift; sourceTree = "<group>"; };
+		000000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		000000000000000000000021 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		000000000000000000000030 = {isa = PBXBuildFile; fileRef = 000000000000000000000013; };
+		000000000000000000000031 = {isa = PBXBuildFile; fileRef = 000000000000000000000014; };
+		000000000000000000000032 = {isa = PBXBuildFile; fileRef = 000000000000000000000015; };
+		000000000000000000000033 = {isa = PBXBuildFile; fileRef = 000000000000000000000016; };
+		000000000000000000000034 = {isa = PBXBuildFile; fileRef = 000000000000000000000017; };
+		000000000000000000000035 = {isa = PBXBuildFile; fileRef = 000000000000000000000018; };
+		000000000000000000000036 = {isa = PBXBuildFile; fileRef = 000000000000000000000019; };
+		000000000000000000000037 = {isa = PBXBuildFile; fileRef = 000000000000000000000020; };
+		000000000000000000000038 = {isa = PBXBuildFile; fileRef = 000000000000000000000021; };
+		000000000000000000000040 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); };
+		000000000000000000000041 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000030,000000000000000000000031,000000000000000000000032,000000000000000000000033,000000000000000000000034,000000000000000000000035,000000000000000000000036,000000000000000000000037,000000000000000000000038); };
+		000000000000000000000042 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); };
+		000000000000000000000050 = {isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000060; buildPhases = (000000000000000000000040,000000000000000000000041,000000000000000000000042); buildRules = (); dependencies = (); name = IslandPiPPrototype; productName = IslandPiPPrototype; productReference = 000000000000000000000001; productType = "com.apple.product-type.application"; };
+		000000000000000000000051 = {isa = PBXProject; buildConfigurationList = 000000000000000000000061; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = 000000000000000000000002; productRefGroup = 000000000000000000000002; projectDirPath = ""; projectRoot = ""; targets = (000000000000000000000050); };
+		000000000000000000000060 = {isa = XCConfigurationList; buildConfigurations = (000000000000000000000070,000000000000000000000071); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		000000000000000000000061 = {isa = XCConfigurationList; buildConfigurations = (000000000000000000000072,000000000000000000000073); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		000000000000000000000070 = {isa = XCBuildConfiguration; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = IslandPiPPrototype/Info.plist; SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 17.0; TARGETED_DEVICE_FAMILY = 1; SDKROOT = iphoneos; ARCHS = arm64; CODE_SIGNING_ALLOWED = NO; CODE_SIGNING_REQUIRED = NO; }; name = Debug; };
+		000000000000000000000071 = {isa = XCBuildConfiguration; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = IslandPiPPrototype/Info.plist; SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 17.0; TARGETED_DEVICE_FAMILY = 1; SDKROOT = iphoneos; ARCHS = arm64; CODE_SIGNING_ALLOWED = NO; CODE_SIGNING_REQUIRED = NO; }; name = Release; };
+		000000000000000000000072 = {isa = XCBuildConfiguration; buildSettings = { SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Debug; };
+		000000000000000000000073 = {isa = XCBuildConfiguration; buildSettings = { SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Release; };
+	};
+	rootObject = 000000000000000000000051;
 }

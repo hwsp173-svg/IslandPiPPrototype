@@ -2,14 +2,14 @@ import SwiftUI
 
 @main
 struct IslandBrowserApp: App {
-    @StateObject private var browserState = BrowserState()
-    @StateObject private var islandState = IslandState()
+    @StateObject private var browser = BrowserState()
+    @StateObject private var island = IslandState()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(browserState)
-                .environmentObject(islandState)
+                .environmentObject(browser)
+                .environmentObject(island)
                 .preferredColorScheme(.dark)
         }
     }

@@ -1,122 +1,50 @@
-import Combine
 import Foundation
-import WebKit
+import SwiftUI
 
 @MainActor
 final class BrowserState: ObservableObject {
-    // MARK: – Published state
-    @Published var urlString: String = ""
-    @Published var currentURL: URL?
-    @Published var pageTitle: String = ""
-    @Published var canGoBack: Bool = false
-    @Published var canGoForward: Bool = false
-    @Published var isLoading: Bool = false
-    @Published var loadingProgress: Double = 0
+    @Published var url: URL?
+    @Published var title = ""
+    @Published var addressText = ""
+    @Published var isLoading = false
+    @Published var progress = 0.0
+    @Published var canGoBack = false
+    @Published var canGoForward = false
+    @Published var showingHome = true
+    @Published var isFullscreen = false
     @Published var errorMessage: String?
-    @Published var isFullscreen: Bool = false
-    @Published var showingHome: Bool = true
-    @Published var searchEngine: SearchEngine = .google
 
-    // MARK: – WebView reference
-    weak var webView: WKWebView?
-
-    // MARK: – Search engines
-    enum SearchEngine: String, CaseIterable, Identifiable {
-        case google, duckDuckGo, bing
-        var id: String { rawValue }
-        var displayName: String {
-            switch self {
-            case .google: return "Google"
-            case .duckDuckGo: return "DuckDuckGo"
-            case .bing: return "Bing"
-            }
-        }
-        func searchURL(for query: String) -> URL? {
-            let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-            switch self {
-            case .google: return URL(string: "https://www.google.com/search?q=\(encoded)")
-            case .duckDuckGo: return URL(string: "https://duckduckgo.com/?q=\(encoded)")
-            case .bing: return URL(string: "https://www.bing.com/search?q=\(encoded)")
-            }
-        }
-    }
-
-    // MARK: – Quick links
-    struct QuickLink: Identifiable {
-        let id = UUID()
-        let title: String
-        let url: URL
-        let icon: String
-        let color: (red: Double, green: Double, blue: Double)
-    }
-
-    static let quickLinks: [QuickLink] = [
-        QuickLink(title: "Instagram", url: URL(string: "https://www.instagram.com")!, icon: "camera.fill", color: (0.88, 0.19, 0.42)),
-        QuickLink(title: "YouTube", url: URL(string: "https://www.youtube.com")!, icon: "play.rectangle.fill", color: (1.0, 0.0, 0.0)),
-        QuickLink(title: "Reddit", url: URL(string: "https://www.reddit.com")!, icon: "bubble.left.and.bubble.right.fill", color: (1.0, 0.27, 0.0)),
-        QuickLink(title: "Google", url: URL(string: "https://www.google.com")!, icon: "magnifyingglass", color: (0.26, 0.52, 0.96)),
-    ]
-
-    // MARK: – Navigation
-    func navigate(to input: String) {
-        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+    func navigate(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-
-        errorMessage = nil
+        
+        let target: URL?
+        if let direct = URL(string: trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://") ? trimmed : "https://" + trimmed),
+           direct.host != nil, trimmed.contains(".") {
+            target = direct
+        } else {
+            let query = trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            target = URL(string: "https://www.google.com/search?q=\(query)")
+        }
+        
+        guard let target else { return }
+        url = target
+        addressText = target.absoluteString
         showingHome = false
-
-        if looksLikeURL(trimmed) {
-            let urlStr = trimmed.contains("://") ? trimmed : "https://\(trimmed)"
-            if let url = URL(string: urlStr) {
-                urlString = urlStr
-                webView?.load(URLRequest(url: url))
-                return
-            }
-        }
-
-        // Search query
-        if let searchURL = searchEngine.searchURL(for: trimmed) {
-            urlString = searchURL.absoluteString
-            webView?.load(URLRequest(url: searchURL))
-        }
-    }
-
-    func navigateToURL(_ url: URL) {
         errorMessage = nil
-        showingHome = false
-        urlString = url.absoluteString
-        webView?.load(URLRequest(url: url))
+        NotificationCenter.default.post(name: .browserNavigate, object: target)
     }
 
-    func goBack() { webView?.goBack() }
-    func goForward() { webView?.goForward() }
-    func reload() {
-        if showingHome { return }
-        webView?.reload()
-    }
-    func stopLoading() { webView?.stopLoading() }
+    func reload() { NotificationCenter.default.post(name: .browserReload, object: nil) }
+    func goBack() { NotificationCenter.default.post(name: .browserBack, object: nil) }
+    func goForward() { NotificationCenter.default.post(name: .browserForward, object: nil) }
+    func toggleFullscreen() { isFullscreen.toggle() }
+    func goHome() { showingHome = true; addressText = "" }
+}
 
-    func goHome() {
-        showingHome = true
-        urlString = ""
-        pageTitle = ""
-        currentURL = nil
-        errorMessage = nil
-        webView?.load(URLRequest(url: URL(string: "about:blank")!))
-    }
-
-    func toggleFullscreen() {
-        isFullscreen.toggle()
-    }
-
-    // MARK: – Helpers
-    private func looksLikeURL(_ string: String) -> Bool {
-        if string.contains("://") { return true }
-        // Has domain-like structure: contains a dot and no spaces
-        if string.contains(".") && !string.contains(" ") {
-            let parts = string.split(separator: ".")
-            if let last = parts.last, last.count >= 2 { return true }
-        }
-        return false
-    }
+extension Notification.Name {
+    static let browserNavigate = Notification.Name("IslandBrowser.navigate")
+    static let browserReload = Notification.Name("IslandBrowser.reload")
+    static let browserBack = Notification.Name("IslandBrowser.back")
+    static let browserForward = Notification.Name("IslandBrowser.forward")
 }

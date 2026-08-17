@@ -1,78 +1,72 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var browserState: BrowserState
-    @EnvironmentObject private var islandState: IslandState
+    @EnvironmentObject private var browser: BrowserState
+    @EnvironmentObject private var island: IslandState
 
     var body: some View {
         ZStack {
-            // Background
-            Color(red: 0.07, green: 0.07, blue: 0.09)
-                .ignoresSafeArea()
+            if browser.showingHome {
+                home
+            } else {
+                BrowserWebView()
+                    .ignoresSafeArea(browser.isFullscreen ? .all : [])
+                    .background(Color(.systemBackground))
+            }
 
-            VStack(spacing: 0) {
-                // Island safe-area spacer – reserve space for the island
-                // so the WKWebView never underlaps it
-                if !browserState.isFullscreen {
-                    Color.clear.frame(height: 44)
-                }
-
-                // Main content area
-                if browserState.showingHome {
-                    BrowserHomeView()
-                        .transition(.opacity)
-                } else {
-                    // WKWebView
-                    ZStack {
-                        BrowserWebView()
-                            .background(Color.white)
-
-                        // Error overlay
-                        if let error = browserState.errorMessage {
-                            errorView(error)
-                        }
-                    }
-                }
-
-                // Bottom toolbar
+            DynamicIslandOverlay()
+                .zIndex(10)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if !browser.isFullscreen {
                 BrowserToolbar()
             }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
-
-            // Dynamic Island overlay – always on top
-            DynamicIslandOverlay()
-                .ignoresSafeArea()
         }
-        .statusBarHidden(browserState.isFullscreen)
+        .statusBarHidden(browser.isFullscreen)
     }
 
-    private func errorView(_ message: String) -> some View {
-        VStack(spacing: 16) {
+    private var home: some View {
+        VStack(spacing: 24) {
             Spacer()
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 44))
-                .foregroundStyle(.orange)
-            Text("Page could not be loaded")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(.white)
-            Text(message)
-                .font(.system(size: 14))
-                .foregroundStyle(.white.opacity(0.6))
+            Image(systemName: "globe.americas.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
+            
+            Text("IslandBrowser")
+                .font(.system(size: 34, weight: .bold))
+            
+            Text("Search the web with an interactive Dynamic Island overlay.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            Button {
-                browserState.reload()
-            } label: {
-                Text("Try Again")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(Color.white.opacity(0.15), in: Capsule())
+                .padding(.horizontal, 36)
+            
+            VStack(spacing: 12) {
+                Button {
+                    browser.navigate("google.com")
+                } label: {
+                    Label("Search Google", systemImage: "magnifyingglass")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button {
+                    browser.navigate("apple.com")
+                } label: {
+                    Label("Visit Apple.com", systemImage: "apple.logo")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
             }
+            .padding(.horizontal, 40)
+            
             Spacer()
         }
         .frame(maxWidth: .infinity)
-        .background(Color(red: 0.07, green: 0.07, blue: 0.09))
+        .background(Color(.systemBackground))
     }
 }

@@ -1,4 +1,4 @@
-name: Build iOS (Unsigned IPA)
+name: Build IslandBrowser
 
 on:
   push:
@@ -15,146 +15,72 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 30
 
-    env:
-      PROJECT: IslandPiPPrototype.xcodeproj
-      SCHEME: IslandPiPPrototype
-      CONFIGURATION: Release
-      ARCHIVE_PATH: build/IslandPiPPrototype.xcarchive
-      IPA_NAME: IslandBrowser.ipa
-
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Discover available Xcode versions ─────────────────────
-      - name: List installed Xcode versions
-        run: |
-          echo "=== All Xcode installations ==="
-          ls -d /Applications/Xcode*.app 2>/dev/null || echo "No Xcode installations found"
-          echo ""
-          echo "=== Current default ==="
-          xcode-select -p
-          xcodebuild -version
-
-      # ── 3. Select Xcode 26.x (preferred) or newest 26.x ────────
       - name: Select Xcode 26
         run: |
-          # Prefer Xcode 26.6 specifically
+          echo "=== Installed Xcode installations ==="
+          ls -d /Applications/Xcode*.app 2>/dev/null || true
+          
           if [ -d "/Applications/Xcode_26.6.app" ]; then
-            XCODE_26="/Applications/Xcode_26.6.app"
-            echo "Found preferred Xcode 26.6"
+            sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          elif [ -d "/Applications/Xcode_26.0.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
           else
-            # Fall back to newest 26.x (but NOT 27.x)
-            XCODE_26=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+            XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+            if [ -n "$XCODE_PATH" ]; then
+              sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+            fi
           fi
-
-          if [ -z "$XCODE_26" ]; then
-            echo "::error::No Xcode 26.x found on this runner. Available installations:"
-            ls -d /Applications/Xcode*.app 2>/dev/null || echo "  (none)"
-            exit 1
-          fi
-
-          echo "Selected: $XCODE_26"
-          sudo xcode-select -s "$XCODE_26"
-
-          # Verify we did NOT end up on Xcode 27
-          XCODE_VER=$(xcodebuild -version | head -1)
-          if echo "$XCODE_VER" | grep -q "Xcode 27"; then
-            echo "::error::Selected Xcode 27 which is not permitted. Aborting."
-            exit 1
-          fi
-
-      # ── 4. Print toolchain info ─────────────────────────────────
-      - name: Print Xcode and SDK info
-        run: |
-          echo "=== Xcode version ==="
+          
+          echo "=== Selected Xcode version ==="
           xcodebuild -version
-          echo ""
-          echo "=== iOS SDKs ==="
-          xcodebuild -showsdks | grep -i ios
-          echo ""
-          echo "=== Swift version ==="
-          swift --version
 
-      # ── 5. Verify project and scheme ────────────────────────────
       - name: Verify project and scheme
         run: |
-          echo "=== Project targets ==="
-          xcodebuild -project "$PROJECT" -list
-          echo ""
-          echo "=== Scheme build settings (key values) ==="
-          xcodebuild -project "$PROJECT" \
-            -scheme "$SCHEME" \
-            -configuration "$CONFIGURATION" \
-            -showBuildSettings \
-            | grep -E '(PRODUCT_BUNDLE_IDENTIFIER|IPHONEOS_DEPLOYMENT_TARGET|ARCHS|SDKROOT|TARGETED_DEVICE_FAMILY|INFOPLIST_FILE|SWIFT_VERSION)'
+          xcodebuild -project IslandPiPPrototype.xcodeproj -list
 
-      # ── 6. Build unsigned archive ───────────────────────────────
-      - name: Archive for physical device (unsigned)
+      - name: Build unsigned archive
         run: |
-          set -o pipefail
-
           xcodebuild archive \
-            -project "$PROJECT" \
-            -scheme "$SCHEME" \
-            -configuration "$CONFIGURATION" \
+            -project IslandPiPPrototype.xcodeproj \
+            -scheme IslandPiPPrototype \
+            -configuration Release \
             -destination 'generic/platform=iOS' \
-            -archivePath "$ARCHIVE_PATH" \
-            ARCHS=arm64 \
+            -archivePath build/IslandBrowser.xcarchive \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee build.log
+            ARCHS=arm64 2>&1 | tee build.log
 
-          echo ""
-          echo "=== Archive contents ==="
-          ls -la "$ARCHIVE_PATH/Products/Applications/" || true
-
-      # ── 7. Package .app into .ipa ───────────────────────────────
       - name: Package IPA
         run: |
-          APP_PATH="$ARCHIVE_PATH/Products/Applications/IslandPiPPrototype.app"
-
+          APP_PATH="build/IslandBrowser.xcarchive/Products/Applications/IslandPiPPrototype.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "::error::.app bundle not found at $APP_PATH"
-            echo "Archive contents:"
-            find "$ARCHIVE_PATH" -type d -maxdepth 4
+            find build/IslandBrowser.xcarchive -type d -maxdepth 4
             exit 1
           fi
-
-          echo "=== .app bundle info ==="
-          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" || true
-          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP_PATH/Info.plist" || true
-          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP_PATH/Info.plist" || true
-          echo ""
-
-          # Sideloadly expects: IPA → Payload/YourApp.app
           mkdir -p Payload
           cp -R "$APP_PATH" Payload/
-          zip -r -y "$IPA_NAME" Payload/
+          zip -qry IslandBrowser.ipa Payload
+          echo "=== Created IslandBrowser.ipa ==="
+          ls -lh IslandBrowser.ipa
 
-          echo "=== IPA created ==="
-          ls -lh "$IPA_NAME"
-          echo ""
-          echo "=== IPA contents ==="
-          unzip -l "$IPA_NAME" | head -20
-
-      # ── 8. Upload IPA artifact ──────────────────────────────────
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: IslandBrowser-unsigned
-          path: ${{ env.IPA_NAME }}
+          path: IslandBrowser.ipa
           retention-days: 90
           if-no-files-found: error
 
-      # ── 9. Upload build logs on failure ─────────────────────────
-      - name: Upload build logs (on failure)
+      - name: Upload build log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs
+          name: build-log
           path: build.log
-          retention-days: 14
           if-no-files-found: ignore
