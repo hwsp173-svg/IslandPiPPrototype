@@ -218,6 +218,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser;
 				PRODUCT_NAME = IslandBrowser;
+				EXECUTABLE_NAME = IslandBrowser;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -234,6 +235,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser;
 				PRODUCT_NAME = IslandBrowser;
+				EXECUTABLE_NAME = IslandBrowser;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
