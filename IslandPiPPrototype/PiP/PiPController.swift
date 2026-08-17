@@ -44,6 +44,7 @@ final class PiPController: NSObject, ObservableObject {
             let url = try PiPVideoAssetFactory.makeTinyBlackMovie()
 
             let player = AVQueuePlayer()
+
             let looper = AVPlayerLooper(
                 player: player,
                 templateItem: AVPlayerItem(url: url)
@@ -93,7 +94,8 @@ final class PiPController: NSObject, ObservableObject {
 
         guard let controller,
               controller.isPictureInPicturePossible else {
-            message = "PiP is not ready. This must be checked on a physical iPhone."
+            message =
+                "PiP is not ready. This must be checked on a physical iPhone."
             return
         }
 
@@ -105,7 +107,8 @@ final class PiPController: NSObject, ObservableObject {
     }
 
     func hostDidAppear() {
-        isPossible = controller?.isPictureInPicturePossible ?? false
+        isPossible =
+            controller?.isPictureInPicturePossible ?? false
     }
 }
 
@@ -144,7 +147,8 @@ extension PiPController: AVPictureInPictureControllerDelegate {
     ) {
         Task { @MainActor in
             self.isActive = false
-            self.message = "PiP stopped by the system or user."
+            self.message =
+                "PiP stopped by the system or user."
         }
     }
 
