@@ -35,6 +35,18 @@ jobs:
             ARCHS=arm64 \
             | tee build/xcodebuild.log
 
+      - name: Publish build diagnostics
+        if: always()
+        run: |
+          if [ -f build/xcodebuild.log ]; then
+            {
+              echo '## xcodebuild diagnostics'
+              echo '```text'
+              tail -n 250 build/xcodebuild.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Package unsigned IPA
         run: |
           set -euo pipefail
