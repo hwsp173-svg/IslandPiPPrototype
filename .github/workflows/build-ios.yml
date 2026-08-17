@@ -20,7 +20,7 @@ jobs:
       SCHEME: IslandPiPPrototype
       CONFIGURATION: Release
       ARCHIVE_PATH: build/IslandPiPPrototype.xcarchive
-      IPA_NAME: IslandPiPPrototype.ipa
+      IPA_NAME: IslandBrowser.ipa
 
     steps:
       # ── 1. Checkout ──────────────────────────────────────────────
@@ -37,7 +37,7 @@ jobs:
           xcode-select -p
           xcodebuild -version
 
-      # ── 3. Select Xcode 26.6 (preferred) or newest 26.x ────────
+      # ── 3. Select Xcode 26.x (preferred) or newest 26.x ────────
       - name: Select Xcode 26
         run: |
           # Prefer Xcode 26.6 specifically
@@ -144,7 +144,7 @@ jobs:
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: IslandPiPPrototype-unsigned
+          name: IslandBrowser-unsigned
           path: ${{ env.IPA_NAME }}
           retention-days: 90
           if-no-files-found: error
