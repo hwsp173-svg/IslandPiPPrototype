@@ -78,6 +78,7 @@
 				000000000000000000000013,
 			);
 			name = App;
+			path = App;
 			sourceTree = "<group>";
 		};
 		000000000000000000000004 = {
@@ -90,6 +91,7 @@
 				000000000000000000000018,
 			);
 			name = Browser;
+			path = Browser;
 			sourceTree = "<group>";
 		};
 		000000000000000000000005 = {
@@ -101,6 +103,7 @@
 				000000000000000000000022,
 			);
 			name = Island;
+			path = Island;
 			sourceTree = "<group>";
 		};
 		000000000000000000000006 = {
@@ -109,6 +112,7 @@
 				000000000000000000000023,
 			);
 			name = Services;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		000000000000000000000007 = {
@@ -117,6 +121,7 @@
 				000000000000000000000024,
 			);
 			name = UI;
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
