@@ -1,0 +1,57 @@
+name: Build IslandBrowser
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          XCODE_PATH=$(find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' | sort | tail -n 1)
+          if [ -n "$XCODE_PATH" ]; then sudo xcode-select -s "$XCODE_PATH/Contents/Developer"; fi
+          xcodebuild -version
+
+      - name: Build unsigned archive
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild archive \
+            -project IslandBrowser.xcodeproj \
+            -scheme IslandBrowser \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/IslandBrowser.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ARCHS=arm64 \
+            | tee build/xcodebuild.log
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+          rm -rf Payload IslandBrowser.ipa
+          mkdir -p Payload
+          cp -R build/IslandBrowser.xcarchive/Products/Applications/IslandBrowser.app Payload/IslandBrowser.app
+          zip -qry IslandBrowser.ipa Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: IslandBrowser-unsigned
+          path: IslandBrowser.ipa
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IslandBrowser-build-log
+          path: build/xcodebuild.log
