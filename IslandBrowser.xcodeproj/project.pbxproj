@@ -243,6 +243,7 @@
 		000000000000000000000072 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -250,6 +251,7 @@
 		000000000000000000000073 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.IslandBrowser;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
